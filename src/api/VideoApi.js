@@ -88,3 +88,15 @@ export async function uploadVideo(file) {
     console.error("Error uploading video:", error);
   }
 }
+
+export async function deleteVideo(videoId) {
+  try {
+    const response = await api.delete(`/videos/${videoId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting video:", error);
+    throw error;
+  }
+}
+
+

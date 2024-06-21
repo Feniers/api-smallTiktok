@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { ServiceContext } from "../contexts/ServiceContext";
-import { Button, Dropdown, Image, Row } from "antd";
+import { Button, Dropdown, Image, Row, Table, Space, message,Modal } from "antd";
 import "../css/Profile.css";
 import {
   AccountBookOutlined,
@@ -8,8 +8,12 @@ import {
   MoneyCollectOutlined,
   SettingOutlined,
   ShoppingOutlined,
+  PlayCircleOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import {fetchVideos,deleteVideo} from "../api/VideoApi";
+import VideoComponent from "../components/VideoComponent";
 
 const orderItems = [
   {
@@ -43,7 +47,40 @@ function Profile() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(userService.getUser());
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 5,
+    total: 0,
+  });
+  const [currentVideoUrl, setCurrentVideoUrl] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const videoPlayerRef = useRef(null);
 
+  useEffect(() => {
+    setLoading(true);
+    fetchVideos(pagination.current, pagination.pageSize)
+        .then((response)=>{
+            setVideos(response.data.rows);
+            console.log(response.data.rows)
+            setPagination({
+                ...pagination,
+                total: response.data.total
+            });
+          setLoading(false);
+        })
+  }, [pagination.current, pagination.pageSize]);
+  const handleTableChange = (pagination) => {
+    setPagination(pagination);
+  };
+  const handleDelete = (videoID) => {
+    deleteVideo(videoID)
+        .then((response)=>{
+          message.success("删除成功");
+          setVideos(videos.filter((item)=>item.videoID !== videoID));
+        })
+    };
   const handleItemClick = (item) => {
     console.log(item);
     if (!user) {
@@ -53,6 +90,44 @@ function Profile() {
       navigate(item.path);
     }
   };
+  const handlePlay = (url) => {
+    setCurrentVideoUrl(url);
+    setIsModalVisible(true);
+  };
+  const columns = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (text, record) => (
+          <Space size="middle">
+            <Button
+                type="primary"
+                icon={<PlayCircleOutlined />}
+                onClick={() => handlePlay(record.url)}
+            >
+              Play
+            </Button>
+            <Button
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={() => handleDelete(record.videoID)}
+            >
+              Delete
+            </Button>
+          </Space>
+      ),
+    },
+  ];
 
   const loginOrLogout = () => {
     if (user) {
@@ -120,7 +195,46 @@ function Profile() {
           </div>
         ))}
       </div>
-      <div className="profile-items"></div>
+      <div className="profile-items">
+        <Table
+            columns={columns}
+            dataSource={videos}
+            pagination={pagination}
+            loading={loading}
+            onChange={handleTableChange}
+            rowKey="videoId"
+        />
+      </div>
+      <Modal
+          visible={isModalVisible}
+          footer={null}
+          onCancel={() => setIsModalVisible(false)}
+          width={400}
+      >
+        {currentVideoUrl && (
+            <VideoComponent src={currentVideoUrl} onEnded={() => setIsModalVisible(false)} />
+        )}
+      </Modal>
+      {/*{currentVideoUrl && (*/}
+      {/*    <div className="video-player-container">*/}
+      {/*      <video*/}
+      {/*          ref={videoPlayerRef}*/}
+      {/*          src={currentVideoUrl}*/}
+      {/*          controls*/}
+      {/*          autoPlay*/}
+      {/*          style={{*/}
+      {/*            width: "100%",*/}
+      {/*            height: "100%",*/}
+      {/*            position: "fixed",*/}
+      {/*            top: 0,*/}
+      {/*            left: 0,*/}
+      {/*            zIndex: 1000,*/}
+      {/*            backgroundColor: "black",*/}
+      {/*          }}*/}
+      {/*          onEnded={() => setCurrentVideoUrl(null)}*/}
+      {/*      />*/}
+      {/*    </div>*/}
+      {/*)}*/}
     </div>
   );
 }
