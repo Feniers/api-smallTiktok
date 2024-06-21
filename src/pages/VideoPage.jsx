@@ -1,141 +1,116 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useContext,
+} from "react";
+import VideoComponent from "../components/VideoComponent";
 import "../css/VideoPage.css";
 import { ServiceContext } from "../contexts/ServiceContext";
 
-function VideoPage() {
-  const videoRefs = useRef([]);
-  const { video: VideoService } = useContext(ServiceContext);
-  const [currentVideos, setCurrentVideos] = useState([]);
+const VideoList = () => {
+  const { video: videoService } = useContext(ServiceContext);
+  const [videos, setVideos] = useState([]);
+  const [likes, setLikes] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState("");
-  const [likes, setLikes] = useState({});
+  const isScrolling = useRef(false);
 
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      const videos = await VideoService.load();
-      setCurrentVideos(videos);
-      setLikes(VideoService.getLikes());
-    };
-    fetchInitialData();
-  }, [VideoService]);
+  const loadMoreVideos = useCallback(async () => {
+    try {
+      const newVideos = await videoService.fetchVideos();
+      // console.log("Fetched videos: ", newVideos);
 
-  const handleNextVideo = async () => {
-    setDirection("next");
-    if (currentIndex === currentVideos.length - 2) {
-      await VideoService.preLoad();
+      if (newVideos.length === 0) return;
+      setVideos((prevVideos) => {
+        console.log("prevVideos", prevVideos);
+        if (prevVideos.length === 0) return newVideos;
+        else return [prevVideos[prevVideos.length - 1], ...newVideos];
+      });
       setCurrentIndex(0);
-    } else {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
+    } catch (error) {
+      console.error("Failed to load videos: ", error);
     }
-  };
+  }, []);
 
-  const handlePrevVideo = () => {
-    if (currentIndex > 0) {
-      setDirection("prev");
-      setCurrentIndex((prevIndex) => prevIndex - 1);
-    }
-  };
+  useEffect(() => {
+    loadMoreVideos();
+  }, [loadMoreVideos]);
 
-  const handleScroll = (event) => {
+  const handleWheel = (event) => {
+    if (isScrolling.current) return;
+    isScrolling.current = true;
+    setTimeout(() => {
+      isScrolling.current = false;
+    }, 500);
+
     if (event.deltaY > 0) {
-      handleNextVideo();
+      // 向下滚动
+      if (currentIndex < videos.length - 1) {
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+      }
+      if (currentIndex >= videos.length - 2) {
+        loadMoreVideos();
+      }
     } else {
-      handlePrevVideo();
-    }
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "ArrowDown") {
-      handleNextVideo();
-    } else if (event.key === "ArrowUp") {
-      handlePrevVideo();
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("wheel", handleScroll);
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("wheel", handleScroll);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [currentIndex]);
-
-  useEffect(() => {
-    const currentVideo = videoRefs.current[currentIndex];
-    if (currentVideo) {
-      currentVideo.classList.add("active");
-      if (direction === "next") {
-        if (currentIndex > 0) {
-          const prevVideo = videoRefs.current[currentIndex - 1];
-          if (prevVideo) {
-            prevVideo.classList.remove("active");
-            prevVideo.classList.add("prev");
-          }
-        }
-      } else if (direction === "prev") {
-        if (currentIndex < currentVideos.length - 1) {
-          const nextVideo = videoRefs.current[currentIndex + 1];
-          if (nextVideo) {
-            nextVideo.classList.remove("active");
-            nextVideo.classList.add("next");
-          }
-        }
+      // 向上滚动
+      if (currentIndex > 0) {
+        setCurrentIndex((prevIndex) => prevIndex - 1);
       }
     }
+  };
+
+  const handleLike = (videoId) => {
+    if (videoService.handleLike(videoId)) {
+      // 点赞
+      setLikes((prevLikes) => [...prevLikes, videoId]);
+      console.log("点赞", videoId);
+    } else {
+      // 取消点赞
+      setLikes((prevLikes) => prevLikes.filter((id) => id !== videoId));
+      console.log("取消点赞", videoId);
+    }
+  };
+
+  // useEffect(() => {
+  //   const syncLikesInterval = setInterval(() => {
+  //     videoService.syncLikes();
+  //   }, 30000);
+
+  //   return () => clearInterval(syncLikesInterval);
+  // }, []);
+
+  useEffect(() => {
+    window.addEventListener("wheel", handleWheel);
 
     return () => {
-      if (currentVideo) {
-        currentVideo.classList.remove("active", "prev", "next");
-      }
+      window.removeEventListener("wheel", handleWheel);
     };
-  }, [currentIndex, direction]);
-
-  const handleLikeClick = (videoId) => {
-    VideoService.likeVideo(videoId);
-    setLikes({ ...likes, [videoId]: true });
-  };
+  }, [currentIndex, videos.length, loadMoreVideos]);
 
   return (
-    <div className="video">
-      <div className="video-container">
-        {currentVideos.map((video, index) => {
-          console.log("currentIndex", currentIndex);
-          console.log("currentVideos", currentVideos);
-          return (
-            <div
-              key={video.id}
-              className={`video-wrapper ${
-                index === currentIndex
-                  ? "active"
-                  : index < currentIndex
-                  ? "prev"
-                  : "next"
-              }`}
+    <div className="video-container">
+      {videos.length > 0 && (
+        <div style={{ height: "100%" }}>
+          {console.log("videos", videos)}
+          {console.log("index", currentIndex)}
+          {console.log("currentVideo", videos[currentIndex])}
+
+          <VideoComponent src={videos[currentIndex].url} onEnded={() => {}} />
+          <div className="video-info">
+            <h2>{videos[currentIndex].title}</h2>
+            <p>{videos[currentIndex].description}</p>
+            <button
+              className="like-button"
+              onClick={() => handleLike(videos[currentIndex].videoID)}
             >
-              <video
-                src={video.ossUrl}
-                autoPlay
-                muted
-                ref={(el) => (videoRefs.current[index] = el)}
-                className="video-player"
-              />
-              <div className="video-info">
-                <h2>{video.title}</h2>
-                <p>{video.description}</p>
-                <button
-                  className={`like-button ${likes[video.id] ? "liked" : ""}`}
-                  onClick={() => handleLikeClick(video.id)}
-                >
-                  {likes[video.id] ? "❤️" : "♡"}
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              {likes.includes(videos[currentIndex].videoID) ? "❤️" : "♡"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default VideoPage;
+export default VideoList;

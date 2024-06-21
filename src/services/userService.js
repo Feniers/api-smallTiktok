@@ -1,84 +1,73 @@
+import { logout } from "../api/VideoApi";
+import { getInfo } from "../api/UserApi";
+
 class UserService {
-  userList = [];
-  currentUser = null;
+  user = {};
+  //   user: defaultUser;
 
   constructor() {
-    this._loadData();
-    // console.log("UserService constructor", this.currentUser);
-  }
-
-  logging(username, password) {
-    // 比较用户名和密码，如果正确则返回用户信息，否则返回null
-    const user = this.userList.find(
-      (u) => u.name === username && u.password === password
-    );
+    const user = this._get_data();
+    console.log("localStorage", localStorage.getItem("user"));
+    console.log("userService constructor", user);
     if (user) {
-      this.currentUser = user;
-      console.log("UserService logging: currentUser", this.currentUser);
-      this._setData();
+      this.user = user;
     }
-    return !!user;
   }
 
-  logout() {
-    console.log("UserService logout: currentUser", this.currentUser);
-    this.currentUser = null;
-    localStorage.removeItem("currentUser");
+  setUser(user) {
+    this.user = user;
+    this._set_data(user);
   }
 
   getUser() {
-    console.log("UserService getUser: currentUser", this.currentUser);
-    return this.currentUser;
-  }
-  getCart() {
-    // 如果当前用户存在，则返回其购物车，否则返回空数组
-    return this.currentUser ? this.currentUser.cart : [];
+    return this.user;
   }
 
-  // 在购物车中添加商品
-  addCart(product) {
-    const existingProduct = this.currentUser.cart.find(
-      (item) => item.id === product.id
-    );
-
-    if (existingProduct) {
-      existingProduct.quantity += 1;
-    } else {
-      this.currentUser.cart.push({ ...product, quantity: 1 });
-    }
-    this._setData();
+  logout() {
+    logout().then(() => {
+      this._clear_data();
+    });
   }
 
-  deleteCart(goods) {
-    this.currentUser.cart = this.currentUser.cart.filter(
-      (item) => !goods.some((good) => good.id === item.id)
-    );
-    this._setData();
+  _set_data(user) {
+    localStorage.setItem("user ", JSON.stringify(user));
   }
 
-  /**
-   * 传入的cart会完全覆盖原来的cart
-   * @param {*} cart
-   */
-  setCart(cart) {
-    this.currentUser.cart = cart;
-    this._setData();
+  _get_data() {
+    // const user = localStorage.getItem("user");
+    // console.log("userService _get_data", user);
+
+    // if (user) {
+    //   try {
+    //     const parsedUser = JSON.parse(user);
+    //     console.log("userService _get_data true", parsedUser);
+    //     return parsedUser;
+    //   } catch (e) {
+    //     console.error("JSON parse error:", e);
+    //     return null;
+    //   }
+    // } else {
+    //   console.log("userService _get_data false");
+    //   return null;
+    // }
+
+    getInfo().then((response) => {
+      console.log("getInfo response", response);
+      if (response.data) {
+        this.setUser(response.data);
+      } else {
+        console.error("Error fetching user info");
+        this._clear_data();
+      }
+    });
   }
 
-  _setData() {
-    localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
-  }
-
-  _loadData() {
-    const user = localStorage.getItem("currentUser");
-    this.userList = JSON.parse(localStorage.getItem("userList")) || [];
-    if (user) {
-      this.currentUser = JSON.parse(user);
-    } else {
-      console.log("no login");
-    }
+  _clear_data() {
+    this.user = {};
+    localStorage.removeItem("user");
   }
 }
 
 const userService = new UserService();
+
 export default userService;

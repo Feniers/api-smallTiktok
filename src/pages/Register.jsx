@@ -1,25 +1,34 @@
 import { Button, Form, Input } from "antd";
 import React from "react";
-import "../css/Login.css";
 import { useNavigate } from "react-router-dom";
-import { login } from "../api/VideoApi";
+import { login, register } from "../api/VideoApi";
+import "../css/Register.css";
 
-function Login() {
+const Register = () => {
   const navigate = useNavigate();
 
   const onFinish = (values) => {
     console.log("Success:", values);
 
-    login(values.userId, values.username, values.password)
+    const user = {
+      userId: values.userId,
+      username: values.username,
+      password: values.password,
+    };
+
+    register(user)
       .then((response) => {
         console.log("response", response);
-        navigate("/");
+        login(values.userId, values.username, values.password).then(
+          (response) => {
+            console.log("response", response);
+            navigate("/");
+          }
+        );
       })
       .catch((error) => {
-        console.error("Login error:", error);
+        console.error("Register error:", error);
       });
-
-    // console.log("response", response);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -27,7 +36,7 @@ function Login() {
   };
 
   return (
-    <div className="login">
+    <div className="register">
       <div className="form-box">
         <Form
           name="basic"
@@ -53,6 +62,8 @@ function Login() {
             rules={[
               {
                 required: true,
+                //只能输入数字
+                pattern: new RegExp("^[0-9]*$"),
                 message: "请输入用户ID！",
               },
             ]}
@@ -85,16 +96,6 @@ function Login() {
             <Input.Password />
           </Form.Item>
 
-          {/* 注册 */}
-          <Form.Item
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
-          >
-            <a href="/register">没有账号？注册一个</a>
-          </Form.Item>
-
           <Form.Item
             wrapperCol={{
               offset: 8,
@@ -102,13 +103,13 @@ function Login() {
             }}
           >
             <Button type="primary" htmlType="submit">
-              登录
+              注册
             </Button>
           </Form.Item>
         </Form>
       </div>
     </div>
   );
-}
+};
 
-export default Login;
+export default Register;

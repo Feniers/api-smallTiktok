@@ -1,48 +1,44 @@
 import React from "react";
 import { Menu } from "antd";
 import { Link } from "react-router-dom";
+import { PlusCircleOutlined } from "@ant-design/icons";
 
 const items = [
   {
     key: "home",
 
-    label: (
-      <Link to="/home" style={{ color: "white" }}>
-        首页
-      </Link>
-    ),
+    label: <Link to="/home">首页</Link>,
   },
 
   {
-    key: "add",
+    key: "upload",
     label: (
-      <Link to="/add" style={{ color: "white" }}>
-        +
+      <Link to="/upload">
+        <PlusCircleOutlined />
       </Link>
     ),
   },
   {
     key: "profile",
-    label: (
-      <Link to="/profile" style={{ color: "white" }}>
-        我的
-      </Link>
-    ),
+    label: <Link to="/profile">我的</Link>,
   },
 ];
 
 const FooterMenu = () => {
   return (
     <Menu
-      mode="horizontal"
+      mode="inline"
       defaultSelectedKeys={["home"]}
       items={items}
+      theme="dark"
       style={{
         height: "50px",
+        width: "430px",
         display: "flex",
         justifyContent: "space-around",
         alignItems: "center",
         backgroundColor: "black",
+        textAlign: "center",
       }}
     ></Menu>
   );

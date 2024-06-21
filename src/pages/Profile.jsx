@@ -4,81 +4,37 @@ import { Button, Dropdown, Image, Row } from "antd";
 import "../css/Profile.css";
 import {
   AccountBookOutlined,
-  CommentOutlined,
-  EnvironmentOutlined,
-  EyeOutlined,
-  HeartOutlined,
   HistoryOutlined,
-  LikeOutlined,
   MoneyCollectOutlined,
   SettingOutlined,
   ShoppingOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
-const items = [
-  {
-    key: 1,
-    label: "地址管理",
-    icon: <EnvironmentOutlined style={{ color: "#CB573C" }}/>,
-    path: "/empty",
-  },
-  {
-    key: 2,
-    label: "我的足迹",
-    icon: <EyeOutlined style={{ color: "#CB573C" }}/>,
-    path: "/empty",
-  },
-  {
-    key: 3,
-    label: "我的关注",
-    icon: <LikeOutlined style={{ color: "#CB573C" }}/>,
-    path: "/empty",
-  },
-  {
-    key: 4,
-    label: "我的收藏",
-    icon: <HeartOutlined style={{ color: "#CB573C" }}/>,
-    path: "/empty",
-  },
-  {
-    key: 5,
-    label: "我的优惠券",
-    icon: <AccountBookOutlined style={{ color: "#CB573C" }}/>,
-    path: "/empty",
-  },
-  {
-    key: 6,
-    label: "我的评价",
-    path: "/404",
-    icon: <CommentOutlined style={{ color: "#CB573C" }}/>,
-  },
-];
-
 const orderItems = [
   {
     key: 1,
-    label: "全部订单",
-    path: "/order",
-    icon: <AccountBookOutlined style={{ color: "#CB573C" }}/>,
+    label: "抖音商城",
+    path: "/empty",
+    icon: <AccountBookOutlined style={{ color: "#CB573C" }} />,
   },
   {
     key: 2,
-    label: "待付款",
-    path: "/order/0",
-    icon: <MoneyCollectOutlined style={{ color: "#CB573C" }}/>,
+    label: "观看历史",
+    path: "/empty",
+    icon: <MoneyCollectOutlined style={{ color: "#CB573C" }} />,
   },
   {
     key: 3,
-    label: "待收货",
-    path: "/order/2",
-    icon: <ShoppingOutlined style={{ color: "#CB573C" }}/>,
+    label: "我的钱包",
+    path: "/empty",
+    icon: <ShoppingOutlined style={{ color: "#CB573C" }} />,
   },
   {
     key: 4,
-    label: "退款/售后",
-    path: "/order/4",
-    icon: <HistoryOutlined style={{ color: "#CB573C" }}/>,
+    label: "我的小程序",
+    path: "/empty",
+    icon: <HistoryOutlined style={{ color: "#CB573C" }} />,
   },
 ];
 
@@ -164,19 +120,7 @@ function Profile() {
           </div>
         ))}
       </div>
-      <div className="profile-items">
-        {items.map((item) => (
-          <Row
-            key={item.key}
-            className="profile-item"
-            onClick={() => handleItemClick(item)}
-          >
-            <p>
-              {item.icon} {item.label}
-            </p>
-          </Row>
-        ))}
-      </div>
+      <div className="profile-items"></div>
     </div>
   );
 }
