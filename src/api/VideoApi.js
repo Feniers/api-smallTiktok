@@ -18,9 +18,9 @@ export async function register(user) {
   }
 }
 
-export async function login(userId, username, password) {
+export async function login(username, password) {
   try {
-    const response = await api.post("/login", { userId, username, password });
+    const response = await api.post("/login", { username, password });
 
     const token = response.data.data;
 

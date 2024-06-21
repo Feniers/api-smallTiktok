@@ -7,7 +7,7 @@ class UserService {
 
   constructor() {
     const user = this._get_data();
-    console.log("localStorage", localStorage.getItem("user"));
+    // console.log("localStorage", localStorage.getItem("user"));
     console.log("userService constructor", user);
     if (user) {
       this.user = user;

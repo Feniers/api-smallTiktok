@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import React from "react";
 import "../css/Login.css";
 import { useNavigate } from "react-router-dom";
@@ -10,13 +10,14 @@ function Login() {
   const onFinish = (values) => {
     console.log("Success:", values);
 
-    login(values.userId, values.username, values.password)
+    login(values.username, values.password)
       .then((response) => {
         console.log("response", response);
         navigate("/");
       })
       .catch((error) => {
         console.error("Login error:", error);
+        message.error("登录失败");
       });
 
     // console.log("response", response);
@@ -47,18 +48,6 @@ function Login() {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          <Form.Item
-            label="用户ID"
-            name="userId"
-            rules={[
-              {
-                required: true,
-                message: "请输入用户ID！",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
           <Form.Item
             label="用户名"
             name="username"
