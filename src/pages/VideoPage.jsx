@@ -21,7 +21,13 @@ const VideoList = () => {
     try {
       const newVideos = await videoService.getData();
       console.log("Fetched videos: ", newVideos);
-
+      /*构建一个全是videoId 的一个list*/
+      const videoIds = newVideos.map((video) => video.videoId);
+      console.log("videoIds", videoIds);
+      /*获取这个list里面的点赞状态*/
+      const newLikes = await videoService.fetchLikes(videoIds);
+      console.log("newLikes", newLikes);
+      setLikes((prevLikes) => [...prevLikes, ...newLikes]);
       if (newVideos.length === 0) return;
       setVideos((prevVideos) => {
         console.log("prevVideos", prevVideos);
@@ -31,6 +37,8 @@ const VideoList = () => {
         return [prevVideos[prevVideos.length - 1], ...newVideos];
       });
       setCurrentIndex(0);
+
+
     } catch (error) {
       console.error("Failed to load videos: ", error);
     }
