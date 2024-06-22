@@ -8,45 +8,6 @@ const defaultUser = {
   password: "123456",
 };
 
-export async function register(user) {
-  try {
-    const response = await api.post("/register", user);
-    return response.data;
-  } catch (error) {
-    console.error("Register error:", error);
-    throw error;
-  }
-}
-
-export async function login(username, password) {
-  try {
-    const response = await api.post("/login", { username, password });
-
-    const token = response.data.data;
-
-    api.defaults.headers.common["token"] = token;
-
-    localStorage.setItem("token", token);
-    userService.setUser(defaultUser);
-
-    return response.data;
-  } catch (error) {
-    console.error("Login error:", error);
-    throw error;
-  }
-}
-
-export async function logout() {
-  try {
-    delete api.defaults.headers.common["Authorization"];
-    localStorage.removeItem("token");
-    // userService.logout();
-  } catch (error) {
-    console.error("Logout error:", error);
-    throw error;
-  }
-}
-
 export async function fetchVideos(page = 1, pageSize = 10) {
   try {
     const response = await api.get("/videos", {
@@ -61,6 +22,10 @@ export async function fetchVideos(page = 1, pageSize = 10) {
 
 export async function handleLikes(likeList) {
   try {
+    console.log("api handleLikes", userService.getUser().userId);
+    if (!userService.getUser().userId) {
+      return null;
+    }
     const response = await api.post(
       `/likes/batch?userId=${userService.getUser().userId}`,
       likeList
@@ -105,8 +70,6 @@ export async function recordVisit(videoId) {
     return response.data;
   } catch (error) {
     console.error("Error recording visit:", error);
-    throw error;
+    // throw error;
   }
 }
-
-

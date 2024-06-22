@@ -9,7 +9,6 @@ import VideoComponent from "../components/VideoComponent";
 import "../css/VideoPage.css";
 import { ServiceContext } from "../contexts/ServiceContext";
 
-
 const VideoList = () => {
   const { video: videoService } = useContext(ServiceContext);
   const [videos, setVideos] = useState([]);
@@ -90,9 +89,14 @@ const VideoList = () => {
   }, [currentIndex, videos.length, loadMoreVideos]);
 
   useEffect(() => {
-    if (videos.length > 0 && !visitedVideos.has(videos[currentIndex].videoID)) {
-      videoService.recordVisit(videos[currentIndex].videoID).then(r => console.log(r));
-      setVisitedVideos((prevVisited) => new Set(prevVisited).add(videos[currentIndex].videoID));
+    if (videos.length > 0 && !visitedVideos.has(videos[currentIndex].videoId)) {
+      console.log("看过", videos[currentIndex].videoId);
+      videoService
+        .recordVisit(videos[currentIndex].videoId)
+        .then((r) => console.log(r));
+      setVisitedVideos((prevVisited) =>
+        new Set(prevVisited).add(videos[currentIndex].videoId)
+      );
     }
   }, [currentIndex, videos, visitedVideos, videoService]);
   return (
@@ -109,9 +113,9 @@ const VideoList = () => {
             <p>{videos[currentIndex].description}</p>
             <button
               className="like-button"
-              onClick={() => handleLike(videos[currentIndex].videoID)}
+              onClick={() => handleLike(videos[currentIndex].videoId)}
             >
-              {likes.includes(videos[currentIndex].videoID) ? "❤️" : "♡"}
+              {likes.includes(videos[currentIndex].videoId) ? "❤️" : "♡"}
             </button>
           </div>
         </div>

@@ -1,26 +1,45 @@
-import { logout } from "../api/VideoApi";
-import { getInfo } from "../api/UserApi";
+import { getInfo, logout, login } from "../api/UserApi";
 
 class UserService {
   user = {};
   //   user: defaultUser;
 
-  constructor() {
-    const user = this._get_data();
-    // console.log("localStorage", localStorage.getItem("user"));
-    console.log("userService constructor", user);
-    if (user) {
-      this.user = user;
-    }
+  // constructor() {
+  //   const user = this._get_data();
+  //   // console.log("localStorage", localStorage.getItem("user"));
+  //   console.log("userService constructor", user);
+  //   if (user) {
+  //     this.user = user;
+  //   }
+  // }
+
+  async login(username, password) {
+    login(username, password)
+      .then((response) => {
+        console.log("登录成功");
+        // this._get_data();
+
+        return true;
+      })
+      .catch((error) => {
+        console.error("Login error:", error);
+        throw error;
+      });
   }
 
   setUser(user) {
     this.user = user;
-    this._set_data(user);
+    localStorage.setItem("user", JSON.stringify(user));
   }
 
   getUser() {
-    return this.user;
+    if (this.user.userId) {
+      return this.user;
+    } else {
+      this._get_data();
+
+      return this.user;
+    }
   }
 
   logout() {
@@ -30,34 +49,22 @@ class UserService {
   }
 
   _set_data(user) {
-    localStorage.setItem("user ", JSON.stringify(user));
+    if (!user) {
+      localStorage.setItem("user ", JSON.stringify(user));
+    }
   }
 
   _get_data() {
-    // const user = localStorage.getItem("user");
-    // console.log("userService _get_data", user);
-
-    // if (user) {
-    //   try {
-    //     const parsedUser = JSON.parse(user);
-    //     console.log("userService _get_data true", parsedUser);
-    //     return parsedUser;
-    //   } catch (e) {
-    //     console.error("JSON parse error:", e);
-    //     return null;
-    //   }
-    // } else {
-    //   console.log("userService _get_data false");
-    //   return null;
-    // }
-
     getInfo().then((response) => {
       console.log("getInfo response", response);
       if (response.data) {
         this.setUser(response.data);
+        localStorage.setItem("user", JSON.stringify(response.data));
+        console.log("this.user", this.user);
       } else {
         console.error("Error fetching user info");
         this._clear_data();
+        throw new Error("Error fetching user info");
       }
     });
   }

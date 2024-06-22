@@ -71,13 +71,16 @@ class VideoService {
       console.error("Error syncing likes:", error);
     }
   }
+
   async recordVisit(videoId) {
+    if (!videoId) {
+    }
     try {
       const response = await api.get(`/videos/${videoId}/visit`);
       return response.data;
     } catch (error) {
       console.error("Error recording visit:", error);
-      throw error;
+      // throw error;
     }
   }
 }

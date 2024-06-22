@@ -1,7 +1,7 @@
 import { Button, Form, Input } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { login, register } from "../api/VideoApi";
+import { login, register } from "../api/UserApi";
 import "../css/Register.css";
 
 const Register = () => {
@@ -19,12 +19,10 @@ const Register = () => {
     register(user)
       .then((response) => {
         console.log("response", response);
-        login( values.username, values.password).then(
-          (response) => {
-            console.log("response", response);
-            navigate("/");
-          }
-        );
+        login(values.username, values.password).then((response) => {
+          console.log("response", response);
+          navigate("/");
+        });
       })
       .catch((error) => {
         console.error("Register error:", error);

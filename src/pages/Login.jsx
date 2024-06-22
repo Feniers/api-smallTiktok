@@ -2,25 +2,33 @@ import { Button, Form, Input, message } from "antd";
 import React from "react";
 import "../css/Login.css";
 import { useNavigate } from "react-router-dom";
-import { login } from "../api/VideoApi";
+import { login } from "../api/UserApi";
+import { useContext } from "react";
+import { ServiceContext } from "../contexts/ServiceContext";
 
 function Login() {
   const navigate = useNavigate();
+  const { user: userService } = useContext(ServiceContext);
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     console.log("Success:", values);
 
-    login(values.username, values.password)
-      .then((response) => {
-        console.log("response", response);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Login error:", error);
-        message.error("登录失败");
-      });
-
-    // console.log("response", response);
+    // login(values.username, values.password)
+    //   .then((response) => {
+    //     console.log("登录成功");
+    //     navigate("/");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Login error:", error);
+    //     message.error("登录失败");
+    //   });
+    try {
+      userService.login(values.username, values.password);
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+      message.error("登录失败:", error);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {

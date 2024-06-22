@@ -8,16 +8,17 @@ import { ServiceContext } from "../contexts/ServiceContext";
 const { Content, Footer } = Layout;
 
 const MainLayout = memo(function MainLayout() {
-  console.log("MainLayout");
-  const { user: userService } = useContext(ServiceContext);
+  // // console.log("MainLayout");
+  // const { user: userService } = useContext(ServiceContext);
 
-  const user = userService.getUser();
+  // const user = userService.getUser();
+  // console.log("MainLayout:", user);
 
-  if (!user || !user.userId) {
-    console.log("MainLayout: user not found, redirecting to login");
-    console.log(user);
-    return <Navigate to="/login" />;
-  }
+  // if (!user || !user.userId) {
+  //   console.log("MainLayout: user not found, redirecting to login");
+  //   console.log(user);
+  //   return <Navigate to="/login" />;
+  // }
 
   // console.log(
   //   "JSON.parse(localStorage)",
