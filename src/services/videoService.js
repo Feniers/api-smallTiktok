@@ -64,17 +64,30 @@ class VideoService {
     //   return [];
     // }
   }
+
   async fetchLikes(videoIds) {
     try {
-      const videoIdsParam= videoIds.join(",");
+      const videoIdsParam = videoIds.join(",");
       const response = await api.get("/likes/batchQuery", {
         params: { videoIds: videoIdsParam },
       });
-      this.likeList = response.data.data;
-      return response.data.data;
+      // this.likeList = response.data.data;
+
+      const likedList = response.data.data;
+      this.likeList = this.likeList.map((video) => {
+        const liked = likedList.find(
+          (liked) => liked.videoId === video.videoId
+        );
+        if (liked) {
+          video.liked = true;
+        }
+        return video;
+      });
+
+      // return response.data.data;
     } catch (error) {
       console.error("Error fetching likes:", error);
-      return [];
+      // return [];
     }
   }
 

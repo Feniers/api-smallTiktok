@@ -14,7 +14,7 @@ export async function fetchVideos() {
 
 export async function handleLikes(likeList) {
   try {
-    console.log("api handleLikes", userService.getUser().userId);
+    console.log("api handleLikes");
     if (!userService.getUser().userId) {
       return null;
     }

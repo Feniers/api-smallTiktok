@@ -70,11 +70,11 @@ class UserService {
 
     getInfo()
       .then((response) => {
-        console.log("getInfo response", response);
+        // console.log("getInfo response", response);
         if (response.data) {
           this.setUser(response.data);
           localStorage.setItem("user", JSON.stringify(response.data));
-          console.log("this.user", this.user);
+          // console.log("this.user", this.user);
         } else {
           console.error("Error fetching user info");
           this._clear_data();
