@@ -14,7 +14,7 @@ class VideoService {
 
       // 获取videoList
       const response = await fetchVideos();
-      const newVideoList = response.data.rows;
+      const newVideoList = response.data;
       console.log("response.data", response.data);
       console.log("newVideoList", newVideoList);
 
@@ -28,7 +28,7 @@ class VideoService {
         }));
         // console.log("new videoList", this.videoList);
         // console.log("new likeList", this.likeList);
-        return response.data.rows;
+        return response.data;
       } else {
         throw new Error("No videos found");
       }
