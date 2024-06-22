@@ -9,13 +9,14 @@ import VideoComponent from "../components/VideoComponent";
 import "../css/VideoPage.css";
 import { ServiceContext } from "../contexts/ServiceContext";
 
+
 const VideoList = () => {
   const { video: videoService } = useContext(ServiceContext);
   const [videos, setVideos] = useState([]);
   const [likes, setLikes] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isScrolling = useRef(false);
-
+  const [visitedVideos, setVisitedVideos] = useState(new Set());
   const loadMoreVideos = useCallback(async () => {
     try {
       const newVideos = await videoService.fetchVideos();
@@ -88,6 +89,12 @@ const VideoList = () => {
     };
   }, [currentIndex, videos.length, loadMoreVideos]);
 
+  useEffect(() => {
+    if (videos.length > 0 && !visitedVideos.has(videos[currentIndex].videoID)) {
+      videoService.recordVisit(videos[currentIndex].videoID).then(r => console.log(r));
+      setVisitedVideos((prevVisited) => new Set(prevVisited).add(videos[currentIndex].videoID));
+    }
+  }, [currentIndex, videos, visitedVideos, videoService]);
   return (
     <div className="video-container">
       {videos.length > 0 && (

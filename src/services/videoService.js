@@ -1,4 +1,5 @@
 import { fetchVideos, handleLikes } from "../api/VideoApi";
+import api from "../api/api";
 
 class VideoService {
   videoList = [];
@@ -68,6 +69,15 @@ class VideoService {
       this.likeList = [];
     } catch (error) {
       console.error("Error syncing likes:", error);
+    }
+  }
+  async recordVisit(videoId) {
+    try {
+      const response = await api.get(`/videos/${videoId}/visit`);
+      return response.data;
+    } catch (error) {
+      console.error("Error recording visit:", error);
+      throw error;
     }
   }
 }

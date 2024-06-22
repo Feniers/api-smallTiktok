@@ -99,4 +99,14 @@ export async function deleteVideo(videoId) {
   }
 }
 
+export async function recordVisit(videoId) {
+  try {
+    const response = await api.post(`/videos/${videoId}/visit`);
+    return response.data;
+  } catch (error) {
+    console.error("Error recording visit:", error);
+    throw error;
+  }
+}
+
 
