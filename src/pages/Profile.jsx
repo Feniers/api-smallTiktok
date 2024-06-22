@@ -12,7 +12,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import {fetchVideos,deleteVideo} from "../api/VideoApi";
+import {getVideos,deleteVideo} from "../api/VideoApi";
 import VideoComponent from "../components/VideoComponent";
 
 const orderItems = [
@@ -60,7 +60,7 @@ function Profile() {
 
   useEffect(() => {
     setLoading(true);
-    fetchVideos(pagination.current, pagination.pageSize)
+    getVideos(pagination.current, pagination.pageSize)
         .then((response)=>{
             setVideos(response.data.rows);
             console.log(response.data.rows)
@@ -78,7 +78,7 @@ function Profile() {
     deleteVideo(videoID)
         .then((response)=>{
           message.success("删除成功");
-          setVideos(videos.filter((item)=>item.videoID !== videoID));
+          setVideos(videos.filter((item)=>item.videoId !== videoID));
         })
     };
   const handleItemClick = (item) => {
@@ -120,7 +120,7 @@ function Profile() {
             <Button
                 type="danger"
                 icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record.videoID)}
+                onClick={() => handleDelete(record.videoId)}
             >
               Delete
             </Button>

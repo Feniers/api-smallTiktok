@@ -17,7 +17,18 @@ export async function fetchVideos() {
     throw error;
   }
 }
-
+export async function getVideos(page = 1, pageSize = 10) {
+  try {
+    const response = await api.get("/videos", {
+      params: { page, pageSize, userID: userService.getUser().userId },
+    });
+    console.log("response11111111111111111111111", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+    throw error;
+  }
+}
 export async function handleLikes(likeList) {
   try {
     console.log("api handleLikes", userService.getUser().userId);
@@ -35,10 +46,9 @@ export async function handleLikes(likeList) {
   }
 }
 
-export async function uploadVideo(file) {
-  const formData = new FormData();
-  formData.append("video", file);
+export async function uploadVideo(formData) {
 
+  console.log("formData", formData);
   try {
     const response = await api.post("/upload", formData, {
       headers: {

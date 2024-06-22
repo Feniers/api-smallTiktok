@@ -8,19 +8,36 @@ function VideoUpload() {
   console.log("Upload");
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
-
+  const [videoInfo, setVideoInfo] = useState({ name: "", desc: "" });
+  const [form] = Form.useForm();
   const handleUpload = () => {
-    uploadVideo(fileList[0])
-      .then((response) => {
-        console.log("response", response);
-        setUploading(false);
-        setFileList([]);
-        message.success("Upload successfully");
-      })
-      .catch((error) => {
-        console.error("Failed to upload video: ", error);
-        setUploading(false);
-        message.error("Upload failed");
+      if (fileList.length === 0) {
+          message.error("请选择一个视频文件！");
+          return;
+      }
+
+      form.validateFields().then(values => {
+          const formData = new FormData();
+          formData.append("video", fileList[0]);
+          formData.append("name", values.name);
+          formData.append("desc", values.desc);
+            console.log("formData111111111", formData);
+          setUploading(true);
+          uploadVideo(formData)
+              .then((response) => {
+                  console.log("response", response);
+                  setUploading(false);
+                  setFileList([]);
+                  form.resetFields();
+                  message.success("Upload successfully");
+              })
+              .catch((error) => {
+                  console.error("Failed to upload video: ", error);
+                  setUploading(false);
+                  message.error("Upload failed");
+              });
+      }).catch(errorInfo => {
+          console.log("Failed:", errorInfo);
       });
   };
 
@@ -40,15 +57,13 @@ function VideoUpload() {
     fileList,
   };
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-    // 修改上传视频的name,desc
-    const video = fileList[0];
-    video.name = values.name;
-    video.desc = values.desc;
-    console.log("video", video);
-    setFileList([video]);
-  };
+    const onFinish = (values) => {
+        console.log("Success:", values);
+        setVideoInfo({
+            name: values.name,
+            desc: values.desc,
+        });
+    };
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -58,6 +73,7 @@ function VideoUpload() {
     <div className="upload-page">
       {/* 修改上传视频的name,desc */}
       <Form
+        form={form}
         className="upload-form"
         name="basic"
         labelCol={{
