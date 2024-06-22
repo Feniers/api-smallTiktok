@@ -5,40 +5,69 @@ class VideoService {
   videoList = [];
   likeList = [];
 
-  async fetchVideos() {
-    try {
-      // 发送likeList
-      console.log("sent likeList", this.likeList);
-      // likeVideo(this.likeList);
-      this.syncLikes();
+  async getData() {
+    // try {
+    // 发送likeList
+    console.log("sent likeList", this.likeList);
+    // likeVideo(this.likeList);
+    this.syncLikes();
 
-      // 获取videoList
-      const response = await fetchVideos();
-      const newVideoList = response.data;
-      console.log("response.data", response.data);
-      console.log("newVideoList", newVideoList);
+    // 获取videoList
+    // const response = await fetchVideos();
+    // const newVideoList = response.data;
 
-      // 更新videoList; likeList
-      // this.videoList = [...this.videoList; ...response.data];
-      if (newVideoList.length > 0) {
-        this.videoList = newVideoList;
-        this.likeList = newVideoList.map((video) => ({
-          videoId: video.videoID,
-          liked: false,
-        }));
-        // console.log("new videoList", this.videoList);
-        // console.log("new likeList", this.likeList);
-        return response.data;
-      } else {
-        throw new Error("No videos found");
-      }
-    } catch (error) {
-      console.error("Error fetching videos:", error);
-      return [];
+    // // 更新videoList; likeList
+    // // this.videoList = [...this.videoList; ...response.data];
+    // if (newVideoList.length > 0) {
+    //   this.videoList = newVideoList;
+    //   this.likeList = newVideoList.map((video) => ({
+    //     videoId: video.videoID,
+    //     liked: false,
+    //   }));
+
+    //   return response.data;
+
+    const response = await fetchVideos();
+
+    if (response.data.length > 0) {
+      this.videoList = response.data;
+      this.likeList = this.videoList.map((video) => ({
+        videoId: video.videoId,
+        liked: false,
+      }));
+      return this.videoList;
+    } else {
+      console.error("No videos found");
     }
+
+    // await fetchVideos()
+    //   .then((response) => {
+    //     const newVideoList = response.data;
+
+    //     // 更新videoList; likeList
+    //     if (newVideoList.length > 0) {
+    //       this.videoList = newVideoList;
+    //       this.likeList = newVideoList.map((video) => ({
+    //         videoId: video.videoID,
+    //         liked: false,
+    //       }));
+    //     } else {
+    //       throw new Error("No videos found");
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.msg);
+    //     return [];
+    //   });
+    // } catch (error) {
+    //   console.error("Error fetching videos:", error.msg);
+    //   return [];
+    // }
   }
 
   handleLike(videoId) {
+    console.log("handleLike", videoId);
+    console.log("likeList", this.likeList);
     const video = this.likeList.find((video) => video.videoId === videoId);
     if (video) {
       if (!video.liked) {

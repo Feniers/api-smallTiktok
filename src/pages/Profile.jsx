@@ -1,6 +1,15 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ServiceContext } from "../contexts/ServiceContext";
-import { Button, Dropdown, Image, Row, Table, Space, message,Modal } from "antd";
+import {
+  Button,
+  Dropdown,
+  Image,
+  Row,
+  Table,
+  Space,
+  message,
+  Modal,
+} from "antd";
 import "../css/Profile.css";
 import {
   AccountBookOutlined,
@@ -12,7 +21,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import {fetchVideos,deleteVideo} from "../api/VideoApi";
+import { fetchVideos, deleteVideo } from "../api/VideoApi";
 import VideoComponent from "../components/VideoComponent";
 
 const orderItems = [
@@ -61,26 +70,29 @@ function Profile() {
   useEffect(() => {
     setLoading(true);
     fetchVideos(pagination.current, pagination.pageSize)
-        .then((response)=>{
-            setVideos(response.data.rows);
-            console.log(response.data.rows)
-            setPagination({
-                ...pagination,
-                total: response.data.total
-            });
-          setLoading(false);
-        })
+      .then((response) => {
+        setVideos(response.data.rows);
+        console.log(response.data.rows);
+        setPagination({
+          ...pagination,
+          total: response.data.total,
+        });
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch videos: ", error);
+        setLoading(false);
+      });
   }, [pagination.current, pagination.pageSize]);
   const handleTableChange = (pagination) => {
     setPagination(pagination);
   };
   const handleDelete = (videoID) => {
-    deleteVideo(videoID)
-        .then((response)=>{
-          message.success("删除成功");
-          setVideos(videos.filter((item)=>item.videoID !== videoID));
-        })
-    };
+    deleteVideo(videoID).then((response) => {
+      message.success("删除成功");
+      setVideos(videos.filter((item) => item.videoID !== videoID));
+    });
+  };
   const handleItemClick = (item) => {
     console.log(item);
     if (!user) {
@@ -109,22 +121,22 @@ function Profile() {
       title: "Actions",
       key: "actions",
       render: (text, record) => (
-          <Space size="middle">
-            <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
-                onClick={() => handlePlay(record.url)}
-            >
-              Play
-            </Button>
-            <Button
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record.videoID)}
-            >
-              Delete
-            </Button>
-          </Space>
+        <Space size="middle">
+          <Button
+            type="primary"
+            icon={<PlayCircleOutlined />}
+            onClick={() => handlePlay(record.url)}
+          >
+            Play
+          </Button>
+          <Button
+            type="danger"
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record.videoID)}
+          >
+            Delete
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -148,9 +160,7 @@ function Profile() {
           width={150}
           alt="avatar"
           src={
-            user
-              ? user.avatar
-              : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
           }
         />
         <div className="info">
@@ -197,22 +207,26 @@ function Profile() {
       </div>
       <div className="profile-items">
         <Table
-            columns={columns}
-            dataSource={videos}
-            pagination={pagination}
-            loading={loading}
-            onChange={handleTableChange}
-            rowKey="videoId"
+          columns={columns}
+          dataSource={videos}
+          pagination={pagination}
+          loading={loading}
+          onChange={handleTableChange}
+          rowKey="videoId"
         />
       </div>
       <Modal
-          visible={isModalVisible}
-          footer={null}
-          onCancel={() => setIsModalVisible(false)}
-          width={400}
+        // visible={isModalVisible}
+        open={isModalVisible}
+        footer={null}
+        onCancel={() => setIsModalVisible(false)}
+        width={400}
       >
         {currentVideoUrl && (
-            <VideoComponent src={currentVideoUrl} onEnded={() => setIsModalVisible(false)} />
+          <VideoComponent
+            src={currentVideoUrl}
+            onEnded={() => setIsModalVisible(false)}
+          />
         )}
       </Modal>
       {/*{currentVideoUrl && (*/}

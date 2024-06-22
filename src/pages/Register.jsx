@@ -11,7 +11,7 @@ const Register = () => {
     console.log("Success:", values);
 
     const user = {
-      userId: values.userId,
+      // userId: values.userId,
       username: values.username,
       password: values.password,
     };
@@ -54,7 +54,7 @@ const Register = () => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          <Form.Item
+          {/* <Form.Item
             label="用户ID"
             name="userId"
             rules={[
@@ -67,7 +67,7 @@ const Register = () => {
             ]}
           >
             <Input />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             label="用户名"
             name="username"
