@@ -9,23 +9,26 @@ import VideoComponent from "../components/VideoComponent";
 import "../css/VideoPage.css";
 import { ServiceContext } from "../contexts/ServiceContext";
 
+
 const VideoList = () => {
   const { video: videoService } = useContext(ServiceContext);
   const [videos, setVideos] = useState([]);
   const [likes, setLikes] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(-1);
   const isScrolling = useRef(false);
   const [visitedVideos, setVisitedVideos] = useState(new Set());
   const loadMoreVideos = useCallback(async () => {
     try {
       const newVideos = await videoService.fetchVideos();
-      // console.log("Fetched videos: ", newVideos);
+      console.log("Fetched videos: ", newVideos);
 
       if (newVideos.length === 0) return;
       setVideos((prevVideos) => {
         console.log("prevVideos", prevVideos);
         if (prevVideos.length === 0) return newVideos;
-        else return [prevVideos[prevVideos.length - 1], ...newVideos];
+        else if(videos.length ===0)  return newVideos;
+
+        return [prevVideos[prevVideos.length - 1], ...newVideos];
       });
       setCurrentIndex(0);
     } catch (error) {
@@ -86,7 +89,7 @@ const VideoList = () => {
     return () => {
       window.removeEventListener("wheel", handleWheel);
     };
-  }, [currentIndex, videos.length, loadMoreVideos]);
+  }, [currentIndex, videos.length, loadMoreVideos, handleWheel]);
 
   useEffect(() => {
     if (videos.length > 0 && !visitedVideos.has(videos[currentIndex].videoId)) {

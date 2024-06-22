@@ -8,11 +8,9 @@ const defaultUser = {
   password: "123456",
 };
 
-export async function fetchVideos(page = 1, pageSize = 10) {
+export async function fetchVideos() {
   try {
-    const response = await api.get("/videos", {
-      params: { page, pageSize, userID: userService.getUser().userId },
-    });
+    const response = await api.get("/videos/recommend");
     return response.data;
   } catch (error) {
     console.error("Error fetching videos:", error);
