@@ -133,7 +133,11 @@ const VideoList = () => {
               onClick={() => handleLike(videos[currentIndex].videoId)}
             >
               {likes.includes(videos[currentIndex].videoId) ? "❤️" : "♡"}
-              <p>{videos[currentIndex].likes}</p>
+              <p>
+                {likes.includes(videos[currentIndex].videoId)
+                  ? videos[currentIndex].likes + 1
+                  : videos[currentIndex].likes}
+              </p>
             </div>
           </div>
         </div>
