@@ -33,13 +33,13 @@ class UserService {
   }
 
   getUser() {
-    if (this.user.userId) {
-      return this.user;
-    } else {
-      this._get_data();
-
-      return this.user;
-    }
+    // if (this.user.userId) {
+    //   return this.user;
+    // } else {
+    this._get_data();
+    console.log(" getUser", this.user);
+    return this.user;
+    // }
   }
 
   logout() {
@@ -55,18 +55,45 @@ class UserService {
   }
 
   _get_data() {
-    getInfo().then((response) => {
-      console.log("getInfo response", response);
-      if (response.data) {
-        this.setUser(response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
-        console.log("this.user", this.user);
-      } else {
-        console.error("Error fetching user info");
+    // getInfo().then((response) => {
+    //   console.log("getInfo response", response);
+    //   if (response.data) {
+    //     this.setUser(response.data);
+    //     localStorage.setItem("user", JSON.stringify(response.data));
+    //     console.log("this.user", this.user);
+    //   } else {
+    //     console.error("Error fetching user info");
+    //     this._clear_data();
+    //     // throw new Error("Error fetching user info");
+    //   }
+    // });
+
+    getInfo()
+      .then((response) => {
+        // console.log("getInfo response", response);
+        if (response.data) {
+          this.setUser(response.data);
+          localStorage.setItem("user", JSON.stringify(response.data));
+          // console.log("this.user", this.user);
+        } else {
+          console.error("Error fetching user info");
+          this._clear_data();
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user info:", error);
         this._clear_data();
-        throw new Error("Error fetching user info");
-      }
-    });
+      });
+
+    // const response = getInfo();
+
+    // if (response) {
+    //   this.user = response.data;
+    //   this.setUser(response.data);
+    // } else {
+    //   console.error("Error fetching user info");
+    //   this._clear_data();
+    // }
   }
 
   _clear_data() {

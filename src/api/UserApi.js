@@ -2,14 +2,14 @@ import { message } from "antd";
 import api from "./api";
 
 export async function getInfo() {
-  try {
-    const response = await api.get("/getInfo");
-    return response.data;
-  } catch (error) {
-    // message.error("获取用户信息失败:", error);
-    console.error("获取用户信息失败:", error);
-    throw error;
-  }
+  // try {
+  //   const response = await api.get("/getInfo");
+  //   return response.data;
+  // } catch (error) {
+  //   // message.error("获取用户信息失败:", error);
+  //   console.error("获取用户信息失败:", error);
+  //   throw error;
+  // }
   // await api
   //   .get("/getInfo")
   //   .then((response) => {
@@ -17,9 +17,30 @@ export async function getInfo() {
   //     return response.data;
   //   })
   //   .catch((error) => {
-  //     message.error("获取用户信息失败:", error);
+  //     // message.error("获取用户信息失败:", error);
   //     throw error;
   //   });
+
+  // await api
+  //   .get("/getInfo")
+  //   .then((response) => {
+  //     console.log("getInfo response", response);
+  //     return response.data;
+  //   })
+  //   .catch((error) => {
+  //     // message.error("获取用户信息失败:", error.msg);
+  //     console.error("获取用户信息失败:", error);
+  //     return null;
+  //   });
+
+  try {
+    const response = await api.get("/getInfo");
+    return response.data;
+  } catch (error) {
+    // console.error("获取用户信息失败:", error);
+    console.log("获取用户信息失败:", error);
+    return null;
+  }
 }
 
 export async function register(user) {

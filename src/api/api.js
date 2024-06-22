@@ -34,7 +34,7 @@ api.interceptors.response.use(
   (response) => {
     // Check if response indicates an error based on your API's response structure
     if (response.data && response.data.code !== 1) {
-      message.error(response.data.msg || "未知错误");
+      // message.error(response.data.msg || "未知错误");
       return Promise.reject(response.data); // Reject promise to handle error in calling function
     }
     return response; // Return response for successful cases

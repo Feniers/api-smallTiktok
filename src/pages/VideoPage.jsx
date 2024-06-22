@@ -9,7 +9,6 @@ import VideoComponent from "../components/VideoComponent";
 import "../css/VideoPage.css";
 import { ServiceContext } from "../contexts/ServiceContext";
 
-
 const VideoList = () => {
   const { video: videoService } = useContext(ServiceContext);
   const [videos, setVideos] = useState([]);
@@ -17,28 +16,29 @@ const VideoList = () => {
   const [currentIndex, setCurrentIndex] = useState(-1);
   const isScrolling = useRef(false);
   const [visitedVideos, setVisitedVideos] = useState(new Set());
+
   const loadMoreVideos = useCallback(async () => {
     try {
-      const newVideos = await videoService.fetchVideos();
+      const newVideos = await videoService.getData();
       console.log("Fetched videos: ", newVideos);
       /*构建一个全是videoId 的一个list*/
       const videoIds = newVideos.map((video) => video.videoId);
       console.log("videoIds", videoIds);
       /*获取这个list里面的点赞状态*/
-      const newLikes = await videoService.fetchLikes(videoIds);
-      console.log("newLikes", newLikes);
-      setLikes((prevLikes) => [...prevLikes, ...newLikes]);
+      // const newLikes = await videoService.fetchLikes(videoIds);
+      // console.log("newLikes", newLikes);
+      // setLikes((prevLikes) => [...prevLikes, ...newLikes]);
+      setLikes(videoService.getLikeList());
+
       if (newVideos.length === 0) return;
       setVideos((prevVideos) => {
         console.log("prevVideos", prevVideos);
         if (prevVideos.length === 0) return newVideos;
-        else if(videos.length ===0)  return newVideos;
+        else if (videos.length === 0) return newVideos;
 
         return [prevVideos[prevVideos.length - 1], ...newVideos];
       });
       setCurrentIndex(0);
-
-
     } catch (error) {
       console.error("Failed to load videos: ", error);
     }

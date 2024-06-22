@@ -1,12 +1,5 @@
 import api from "./api";
 import userService from "../services/userService";
-import axios from "axios";
-
-const defaultUser = {
-  userId: 3,
-  username: "wck",
-  password: "123456",
-};
 
 export async function fetchVideos() {
   try {
@@ -14,7 +7,8 @@ export async function fetchVideos() {
     return response.data;
   } catch (error) {
     console.error("Error fetching videos:", error);
-    throw error;
+    // throw error;
+    return [];
   }
 }
 export async function getVideos(page = 1, pageSize = 10) {
@@ -31,7 +25,7 @@ export async function getVideos(page = 1, pageSize = 10) {
 }
 export async function handleLikes(likeList) {
   try {
-    console.log("api handleLikes", userService.getUser().userId);
+    console.log("api handleLikes");
     if (!userService.getUser().userId) {
       return null;
     }
