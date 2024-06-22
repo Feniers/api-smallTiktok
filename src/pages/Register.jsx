@@ -19,7 +19,7 @@ const Register = () => {
     register(user)
       .then((response) => {
         console.log("response", response);
-        login(values.userId, values.username, values.password).then(
+        login( values.username, values.password).then(
           (response) => {
             console.log("response", response);
             navigate("/");
