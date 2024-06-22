@@ -62,17 +62,36 @@
 }
 
 .like-button {
-    background: none;
+    /* background: none;
     border: none;
     color: #fff;
     font-size: 2em;
     cursor: pointer;
     position: absolute;
     right: 15px;
-    top: 30px;
+    top: 30px; */
+
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2em;
+    height: 100%;
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
 }
 
 .like-button.liked {
     color: red;
+}
+
+.like-button p {
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }

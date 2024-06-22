@@ -122,12 +122,19 @@ const VideoList = () => {
           <div className="video-info">
             <h2>{videos[currentIndex].title}</h2>
             <p>{videos[currentIndex].description}</p>
-            <button
+            {/* <button
               className="like-button"
               onClick={() => handleLike(videos[currentIndex].videoId)}
             >
               {likes.includes(videos[currentIndex].videoId) ? "❤️" : "♡"}
-            </button>
+            </button> */}
+            <div
+              className="like-button"
+              onClick={() => handleLike(videos[currentIndex].videoId)}
+            >
+              {likes.includes(videos[currentIndex].videoId) ? "❤️" : "♡"}
+              <p>{videos[currentIndex].likes}</p>
+            </div>
           </div>
         </div>
       )}
